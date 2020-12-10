@@ -1,4 +1,4 @@
-package com.github.exidcuter.dockerregistryexplorerplugin
+package com.github.exidcuter.dockerregistryexplorer
 
 import com.intellij.AbstractBundle
 import org.jetbrains.annotations.NonNls

@@ -1,58 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="81" height="80" viewBox="0 0 81 80">
-  <defs>
-    <linearGradient id="pluginsdk_80-a" x1="-.031%" x2="100.053%" y1="49.963%" y2="49.963%">
-      <stop offset="25.81%" stop-color="#F97A12"/>
-      <stop offset="45.91%" stop-color="#B07B58"/>
-      <stop offset="72.41%" stop-color="#577BAE"/>
-      <stop offset="91.05%" stop-color="#1E7CE5"/>
-      <stop offset="100%" stop-color="#087CFA"/>
-    </linearGradient>
-    <linearGradient id="pluginsdk_80-b" x1="27.55%" x2="82.223%" y1="34.514%" y2="77.605%">
-      <stop offset="0%" stop-color="#F97A12"/>
-      <stop offset="7.18%" stop-color="#CB7A3E"/>
-      <stop offset="15.41%" stop-color="#9E7B6A"/>
-      <stop offset="24.2%" stop-color="#757B91"/>
-      <stop offset="33.44%" stop-color="#537BB1"/>
-      <stop offset="43.24%" stop-color="#387CCC"/>
-      <stop offset="53.81%" stop-color="#237CE0"/>
-      <stop offset="65.52%" stop-color="#147CEF"/>
-      <stop offset="79.25%" stop-color="#0B7CF7"/>
-      <stop offset="100%" stop-color="#087CFA"/>
-    </linearGradient>
-    <linearGradient id="pluginsdk_80-c" x1="63.121%" x2="40.793%" y1="97.699%" y2="-6.587%">
-      <stop offset="0%" stop-color="#FE315D"/>
-      <stop offset="7.84%" stop-color="#CB417E"/>
-      <stop offset="16.01%" stop-color="#9E4E9B"/>
-      <stop offset="24.74%" stop-color="#755BB4"/>
-      <stop offset="33.92%" stop-color="#5365CA"/>
-      <stop offset="43.65%" stop-color="#386DDB"/>
-      <stop offset="54.14%" stop-color="#2374E9"/>
-      <stop offset="65.76%" stop-color="#1478F3"/>
-      <stop offset="79.4%" stop-color="#0B7BF8"/>
-      <stop offset="100%" stop-color="#087CFA"/>
-    </linearGradient>
-    <linearGradient id="pluginsdk_80-d" x1="25.331%" x2="93.854%" y1="24.119%" y2="132.621%">
-      <stop offset="0%" stop-color="#FE315D"/>
-      <stop offset="4.023%" stop-color="#F63462"/>
-      <stop offset="10.37%" stop-color="#DF3A71"/>
-      <stop offset="16.67%" stop-color="#C24383"/>
-      <stop offset="29.12%" stop-color="#AD4A91"/>
-      <stop offset="54.98%" stop-color="#755BB4"/>
-      <stop offset="91.75%" stop-color="#1D76ED"/>
-      <stop offset="100%" stop-color="#087CFA"/>
-    </linearGradient>
-  </defs>
-  <g fill="none" fill-rule="evenodd">
-    <g fill-rule="nonzero" transform="translate(8 8)">
-      <path fill="url(#pluginsdk_80-a)" d="M6.08754566,64 L2.66453526e-15,59.1000946 L0,26.7918961 L30,38.6703369 L10.1403967,64 L6.08754566,64 Z"/>
-      <path fill="url(#pluginsdk_80-b)" d="M20.9524706,64 L52.2740919,31.9159091 L37.6708832,0.460194805 L38.0580944,1.33226763e-15 L64,0 L64,64 L20.9524706,64 Z"/>
-      <path fill="url(#pluginsdk_80-c)" d="M34.4123783,0 L64,0 L64,28.0366227 L49.0078336,44 L34,0.44696173 L34.4123783,0 Z"/>
-      <path fill="url(#pluginsdk_80-d)" d="M30.3358775,64 L0,64 L0,49.9709549 L6.23437817,29.2830519 L0,27.1596093 L0,0 L39.4697238,0 L58,21.3844805 L30.5381317,63.9259091 L30.3358775,64 Z"/>
+<svg width="600" height="600" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="602" width="602" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <g id="svg_144">
+   <rect x="0.05342" y="0.42738" transform="matrix(37.4375, 0, 0, 37.4375, 3.71598e-06, 0)" fill="none" height="16" width="16" id="svg_134"/>
+   <g transform="matrix(37.4375, 0, 0, 37.4375, 3.71598e-06, 0)" id="svg_136" fill-rule="evenodd" fill="none">
+    <g id="svg_137">
+     <path id="svg_138" d="m15.30342,8.46638c-0.039,-0.031 -0.4,-0.304 -1.162,-0.304c-0.202,0 -0.403,0.018 -0.601,0.052c-0.148,-1.012 -0.984,-1.505 -1.021,-1.527l-0.206,-0.118l-0.134,0.195a2.744,2.744 0 0 0 -0.364,0.85c-0.137,0.578 -0.054,1.12 0.24,1.583c-0.355,0.198 -0.923,0.246 -1.038,0.25l-9.964,0c-0.05,1.381 0.087,2.44 0.412,3.176c0.488,1.104 1.03,1.813 1.933,2.244c0.903,0.43 1.459,0.576 2.753,0.576a9.368,9.368 0 0 0 1.743,-0.158a7.286,7.286 0 0 0 2.274,-0.826a6.253,6.253 0 0 0 1.552,-1.27c0.745,-0.844 1.19,-2.384 1.52,-3.218l0.13,0c0.817,0 1.318,-0.327 1.595,-0.6a1.74,1.74 0 0 0 0.42,-0.623l0.059,-0.171l-0.141,-0.111z" fill="#34A2F2"/>
+     <circle id="svg_139" fill="#FFF" r="1.25" cy="11.67738" cx="5.20342"/>
+     <circle id="svg_140" fill-rule="nonzero" fill="#34A2F2" r="1" cy="11.67738" cx="5.20342"/>
     </g>
-    <g fill-rule="nonzero" transform="translate(12 12)">
-      <rect width="56" height="56" fill="#000"/>
-      <rect width="22" height="4" x="4" y="46" fill="#FFFEFE"/>
-      <path fill="#FFFEFE" d="M11.128,25.28 C8.584,25.28 6.016,24.392 4,22.592 L6.184,19.976 C7.696,21.224 9.28,22.016 11.2,22.016 C12.712,22.016 13.624,21.416 13.624,20.432 L13.624,20.384 C13.624,19.448 13.048,18.968 10.24,18.248 C6.856,17.384 4.672,16.448 4.672,13.112 L4.672,13.064 C4.672,10.016 7.12,8 10.552,8 C13,8 15.088,8.768 16.792,10.136 L14.872,12.92 C13.384,11.888 11.92,11.264 10.504,11.264 C9.088,11.264 8.344,11.912 8.344,12.728 L8.344,12.776 C8.344,13.88 9.064,14.24 11.968,14.984 C15.376,15.872 17.296,17.096 17.296,20.024 L17.296,20.072 C17.296,23.408 14.752,25.28 11.128,25.28 Z M19.512,25.04 L19.512,8.24 L26.064,8.24 C31.344,8.24 34.992,11.864 34.992,16.592 L34.992,16.64 C34.992,21.368 31.344,25.04 26.064,25.04 L19.512,25.04 Z M26.064,11.576 L23.208,11.576 L23.208,21.704 L26.064,21.704 C29.088,21.704 31.128,19.664 31.128,16.688 L31.128,16.64 C31.128,13.664 29.088,11.576 26.064,11.576 Z M37.28,25.04 L37.28,8.24 L40.976,8.24 L40.976,15.584 L47.744,8.24 L52.28,8.24 L45.416,15.368 L52.568,25.04 L48.128,25.04 L42.92,17.888 L40.976,19.904 L40.976,25.04 L37.28,25.04 Z"/>
-    </g>
+    <path id="svg_141" d="m3.05342,5.42738l3,0l0,3l-3,0l0,-3z" fill-rule="nonzero" fill="#34A2F2"/>
+    <path id="svg_142" d="m7.05342,5.42738l3,0l0,3l-3,0l0,-3z" fill-rule="nonzero" fill="#34A2F2"/>
+    <path id="svg_143" d="m5.05342,1.42738l3,0l0,3l-3,0l0,-3z" fill-rule="nonzero" fill="#34A2F2"/>
+   </g>
   </g>
+  <g id="svg_358">
+   <rect x="8.52423" y="6.5918" transform="matrix(34.5, 0, 0, 34.5, -280.086, -247.417)" fill="none" height="16" width="16" id="svg_353"/>
+   <g transform="matrix(34.5, 0, 0, 34.5, -280.086, -247.417)" id="svg_355" fill-rule="evenodd" fill="#6E6E6E">
+    <path id="svg_356" d="m17.79623,17.3198l1.556,-1.556l4.414,4.414l-1.556,1.556l-4.414,-4.414z"/>
+    <path id="svg_357" d="m15.27423,19.0918a5.75,5.75 0 1 1 0,-11.5a5.75,5.75 0 0 1 0,11.5zm0,-2a3.75,3.75 0 1 0 0,-7.5a3.75,3.75 0 0 0 0,7.5z"/>
+   </g>
+  </g>
+ </g>
 </svg>

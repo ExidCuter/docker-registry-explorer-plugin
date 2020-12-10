@@ -1,7 +1,7 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# docker-registry-explorer-plugin Changelog
+# Docker Registry Explorer Changelog
 
-## [Unreleased]
+## [1.0.0] - 2020-12-10
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+- Initial release

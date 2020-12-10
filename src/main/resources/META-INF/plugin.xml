@@ -1,19 +1,15 @@
 <idea-plugin>
-    <id>com.github.exidcuter.dockerregistryexplorerplugin</id>
-    <name>docker-registry-explorer-plugin</name>
-    <vendor>exidcuter</vendor>
+    <id>com.github.exidcuter.dockerregistryexplorer</id>
+    <name>Docker Registry Explorer</name>
+    <vendor>Domen Jesenovec</vendor>
 
     <!-- Product and plugin compatibility requirements -->
     <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.exidcuter.dockerregistryexplorerplugin.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.exidcuter.dockerregistryexplorerplugin.services.MyProjectService"/>
+        <applicationService serviceImplementation="com.github.exidcuter.dockerregistryexplorer.data.RegistryExplorerState"/>
+        <toolWindow id="Registry Explorer" secondary="true" anchor="left" icon="RegistryExplorerIcons.ToolWindowIcon"
+                    factoryClass="com.github.exidcuter.dockerregistryexplorer.ui.ExplorerToolWindowFactory"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.exidcuter.dockerregistryexplorerplugin.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
 </idea-plugin>
