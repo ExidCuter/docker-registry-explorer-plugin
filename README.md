@@ -1,12 +1,13 @@
 # Docker Registry Explorer
 
-![Build](https://github.com/ExidCuter/docker-repository-explorer/workflows/Build/badge.svg)
 [![Version](https://img.shields.io/jetbrains/plugin/v/15548.svg)](https://plugins.jetbrains.com/plugin/15548)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/15548.svg)](https://plugins.jetbrains.com/plugin/15548)
 
 
 <!-- Plugin description -->
 Docker Registry Explorer is a plugin that enables you to see the contents of your Docker Registry in your IDE.
+
+Plugin currently only supports registries that have enabled "basic http auth". Support for OAuth coming soon™.
 
 <!-- Plugin description end -->
 
