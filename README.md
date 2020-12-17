@@ -20,5 +20,5 @@ Plugin currently only supports registries that have enabled "basic http auth". S
   
 - Manually:
 
-  Download the [latest release](https://github.com/ExidCuter/docker-repository-explorer/releases/latest) and install it manually using
+  Download the [latest release](https://github.com/ExidCuter/docker-registry-explorer-plugin/releases/latest) and install it manually using
   <kbd>Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
