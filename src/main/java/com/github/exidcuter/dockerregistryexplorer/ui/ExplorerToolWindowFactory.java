@@ -89,17 +89,19 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
     private List<DefaultMutableTreeNode> fetchData() {
         List<DefaultMutableTreeNode> repositoryNodes = new ArrayList<>();
 
-        dockerRepositories.forEach(repositoy -> {
+        dockerRepositories.forEach(repository -> {
 
-            DefaultMutableTreeNode repositoryNode = new DefaultMutableTreeNode(repositoy.getLoginCredentials().getRegistryURL());
+            DefaultMutableTreeNode repositoryNode = new DefaultMutableTreeNode(repository.getLoginCredentials().getRegistryURL());
             try {
-                repositoy.getCatalog().getRepositories().forEach(imageName -> {
+                repository.getCatalog().getRepositories().forEach(imageName -> {
                     DefaultMutableTreeNode imageNode = new DefaultMutableTreeNode(imageName);
-                    Tags tags = repositoy.getTags(imageName);
+                    Tags tags = repository.getTags(imageName);
 
-                    tags.getTags().forEach(tag -> {
-                        imageNode.add(new DefaultMutableTreeNode(tag, false));
-                    });
+                    if (tags.getTags() != null) {
+                        tags.getTags().forEach(tag -> {
+                            imageNode.add(new DefaultMutableTreeNode(tag, false));
+                        });
+                    }
 
                     repositoryNode.add(imageNode);
                 });
@@ -152,6 +154,22 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
 
             dockerRepositories.remove(repo);
             refreshTree(tree);
+        } else if (selectedNodes.length > 0 && !selectedNodes[0].getAllowsChildren()) {
+            String tag = (String) selectedNodes[0].getUserObject();
+            String image = (String) ((DefaultMutableTreeNode) selectedNodes[0].getParent()).getUserObject();
+            String registry = (String) ((DefaultMutableTreeNode) selectedNodes[0].getParent().getParent()).getUserObject();
+
+            DockerRegistry dockerRegistry = dockerRepositories.stream().filter(dr -> dr.getLoginCredentials().getRegistryURL().equals(registry)).findFirst().orElse(null);
+
+            if (dockerRegistry != null) {
+                try {
+                    dockerRegistry.deleteImage(image, tag);
+                    refreshTree(tree);
+                    RegistryErrorNotifier.notifySuccess(project, registry + "/" + image + ":" + tag + " was successfully deleted!");
+                } catch (Exception e) {
+                    RegistryErrorNotifier.notifyError(project, e.getMessage());
+                }
+            }
         }
     }
 

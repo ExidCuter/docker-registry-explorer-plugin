@@ -16,4 +16,8 @@ public class RegistryErrorNotifier {
                 .notify(project);
     }
 
+    public static void notifySuccess(@Nullable Project project, String content) {
+        NOTIFICATION_GROUP.createNotification(content, NotificationType.INFORMATION)
+                .notify(project);
+    }
 }
