@@ -11,5 +11,6 @@
         <applicationService serviceImplementation="com.github.exidcuter.dockerregistryexplorer.data.RegistryExplorerState"/>
         <toolWindow id="Registry Explorer" secondary="true" anchor="left" icon="RegistryExplorerIcons.ToolWindowIcon"
                     factoryClass="com.github.exidcuter.dockerregistryexplorer.ui.ExplorerToolWindowFactory"/>
+        <notificationGroup id="DockerRegistry Notifications" displayType="BALLOON"/>
     </extensions>
 </idea-plugin>
