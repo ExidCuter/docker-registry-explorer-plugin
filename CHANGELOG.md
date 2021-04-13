@@ -2,6 +2,13 @@
 
 # Docker Registry Explorer Changelog
 
+## [1.0.3-stable] - 2021-04-13
+### Added
+- Support for 2021.1 versions.
+
+### Fixed
+- Removed usages of deprecated APIs 
+
 ## [1.0.2-stable] - 2021-04-01
 ### Added
 - Delete Docker image function

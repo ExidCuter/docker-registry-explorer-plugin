@@ -13,6 +13,7 @@ import org.tdfl.docker.model.LoginCredentials;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
+import java.util.function.Supplier;
 
 
 public class AddEditDialogWrapper extends DialogWrapper {
@@ -44,13 +45,15 @@ public class AddEditDialogWrapper extends DialogWrapper {
         password = new JBPasswordField();
         registryURL = new JBTextField();
 
-        new ComponentValidator(this.getDisposable()).withValidator(v -> {
-            if (this.registryURL.getText().matches(urlRegex)) {
-                v.updateInfo(null);
+        new ComponentValidator(this.getDisposable()).withValidator((Supplier<ValidationInfo>) () -> {
+            if (registryURL.getText().matches(urlRegex)) {
+                return null;
             } else {
-                v.updateInfo(new ValidationInfo("Please enter a valid URL", registryURL));
+                return new ValidationInfo("Please enter a valid URL", registryURL);
             }
         }).andStartOnFocusLost().installOn(registryURL);
+
+        new ComponentValidator(this.getDisposable()).andStartOnFocusLost().installOn(registryURL);
 
         registryURL.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
@@ -64,7 +67,7 @@ public class AddEditDialogWrapper extends DialogWrapper {
     @Override
     protected JComponent createCenterPanel() {
         JPanel panel = new JPanel();
-        panel.setSize(1500,300);
+        panel.setSize(1500, 300);
         GridBagLayout layout = new GridBagLayout();
 
         JLabel usernameLabel = new JLabel("Username:");
@@ -81,33 +84,33 @@ public class AddEditDialogWrapper extends DialogWrapper {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        panel.add(usernameLabel,gbc);
+        panel.add(usernameLabel, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.ipadx = 30;
-        panel.add(username,gbc);
+        panel.add(username, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 1;
-        panel.add(passwordLabel,gbc);
+        panel.add(passwordLabel, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.ipadx = 30;
-        panel.add(password,gbc);
+        panel.add(password, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(registryUrlLabel,gbc);
+        panel.add(registryUrlLabel, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.ipadx = 30;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(registryURL,gbc);
+        panel.add(registryURL, gbc);
 
         return panel;
     }
