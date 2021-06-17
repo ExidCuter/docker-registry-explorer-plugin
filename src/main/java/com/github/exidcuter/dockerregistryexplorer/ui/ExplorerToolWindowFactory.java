@@ -106,7 +106,7 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
                     repositoryNode.add(imageNode);
                 });
             } catch (Exception e) {
-                RegistryErrorNotifier.notifyError(project, e.getMessage());
+                RegistryErrorNotifier.notifyError(project, e.getMessage() == null || e.getMessage().isEmpty() ? e.toString() : e.getMessage());
             }
 
             repositoryNodes.add(repositoryNode);
@@ -167,7 +167,7 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
                     refreshTree(tree);
                     RegistryErrorNotifier.notifySuccess(project, registry + "/" + image + ":" + tag + " was successfully deleted!");
                 } catch (Exception e) {
-                    RegistryErrorNotifier.notifyError(project, e.getMessage());
+                    RegistryErrorNotifier.notifyError(project, e.getMessage() == null || e.getMessage().isEmpty() ? e.toString() : e.getMessage());
                 }
             }
         }
