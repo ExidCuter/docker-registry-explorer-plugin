@@ -2,6 +2,14 @@
 
 # Docker Registry Explorer Changelog
 
+## [1.0.6-stable] - 2021-07-30
+### Fixed
+- Support for 2021.2 versions
+
+## [1.0.5-stable] - 2021-06-18
+### Fixed
+- Compatibility issues
+
 ## [1.0.4-stable] - 2021-06-16
 ### Fixed
 - Registry not found error
