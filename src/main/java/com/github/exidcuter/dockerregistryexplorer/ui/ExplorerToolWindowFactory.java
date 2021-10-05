@@ -120,7 +120,7 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
     private void addButtonPressed(AnActionButton button) {
         AddEditDialogWrapper dialog = new AddEditDialogWrapper();
         if (dialog.showAndGet()) {
-            dockerRepositories.add(new DockerRegistry(dialog.getLoginCredentials()));
+            dockerRepositories.add(new DockerRegistry(dialog.getLoginCredentials(), true));
             refreshTree(tree);
         }
     }

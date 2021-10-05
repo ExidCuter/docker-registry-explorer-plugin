@@ -43,7 +43,7 @@ repositories {
     maven("https://jitpack.io")
 }
 dependencies {
-    implementation("com.github.ExidCuter:DockerRegistryV2Wrapper:5d1649162e")
+    implementation("com.github.ExidCuter:DockerRegistryV2Wrapper:master-SNAPSHOT")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.14.2")
 }
 
