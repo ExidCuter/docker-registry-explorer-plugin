@@ -2,6 +2,10 @@
 
 # Docker Registry Explorer Changelog
 
+## [1.0.8-stable] - 2022-05-31
+### Added
+- Support for 2022.2 versions
+
 ## [1.0.7-stable] - 2021-10-05
 ### Added
 - Support for self-signed certs
