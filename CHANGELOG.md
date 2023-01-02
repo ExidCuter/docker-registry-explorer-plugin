@@ -2,6 +2,10 @@
 
 # Docker Registry Explorer Changelog
 
+## [1.0.9-stable] - 2023-01-02
+### Added
+- Support for 2022.3+ versions
+
 ## [1.0.8-stable] - 2022-05-31
 ### Added
 - Support for 2022.2 versions
