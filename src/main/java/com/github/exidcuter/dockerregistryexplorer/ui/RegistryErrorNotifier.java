@@ -9,7 +9,7 @@ public class RegistryErrorNotifier {
 
     public static void notifyError(@Nullable Project project, String content) {
         NotificationGroupManager.getInstance().getNotificationGroup("DockerRegistry Notifications")
-                .createNotification("Docker Registry Error", "", content, NotificationType.ERROR)
+                .createNotification("Docker registry error", "", content, NotificationType.ERROR)
                 .notify(project);
     }
 

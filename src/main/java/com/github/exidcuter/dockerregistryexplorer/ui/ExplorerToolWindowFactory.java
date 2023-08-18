@@ -3,6 +3,7 @@ package com.github.exidcuter.dockerregistryexplorer.ui;
 import com.github.exidcuter.dockerregistryexplorer.data.RegistryExplorerState;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
@@ -10,7 +11,12 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManagerEvent;
+import com.intellij.ui.content.ContentManagerListener;
 import com.intellij.ui.treeStructure.Tree;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.tdfl.docker.DockerRegistry;
 import org.tdfl.docker.model.Tags;
@@ -27,10 +33,14 @@ import java.util.List;
 public class ExplorerToolWindowFactory implements ToolWindowFactory {
     private Project project;
     private Tree tree;
+    private JPanel panel;
+    private ToolWindow toolWindow;
     private List<DockerRegistry> dockerRepositories;
+
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+        this.toolWindow = toolWindow;
         this.project = project;
         this.dockerRepositories = RegistryExplorerState.getInstance().getDockerRepositories();
 
@@ -39,8 +49,6 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
         }
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("repository");
-
-        fetchData().forEach(root::add);
 
         DefaultTreeModel model = new DefaultTreeModel(root);
         this.tree = new Tree(model);
@@ -69,21 +77,33 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
         repositoriesPanel.add(toolbarDecorator, BorderLayout.PAGE_START);
         repositoriesPanel.add(jScrollPane, BorderLayout.CENTER);
 
-        toolWindow.getComponent().add(repositoriesPanel);
+        this.panel = repositoriesPanel;
+
+        Content content = ContentFactory.SERVICE.getInstance().createContent(repositoriesPanel, "", false);
+        toolWindow.addContentManagerListener(new ContentManagerListener() {
+            @Override
+            public void contentAdded(@NotNull ContentManagerEvent event) {
+                refreshTree(tree);
+            }
+        });
+
+        toolWindow.getContentManager().addContent(content);
     }
 
     public void refreshTree(Tree tree) {
         tree.setPaintBusy(true);
 
-        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-        root.removeAllChildren();
+        ReadAction.nonBlocking(() -> {
+            DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+            root.removeAllChildren();
 
-        fetchData().forEach(root::add);
+            fetchData().forEach(root::add);
 
-        model.reload(root);
+            model.reload(root);
 
-        tree.setPaintBusy(false);
+            tree.setPaintBusy(false);
+        }).submit(AppExecutorUtil.getAppExecutorService());
     }
 
     private List<DefaultMutableTreeNode> fetchData() {
@@ -93,9 +113,9 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
 
             DefaultMutableTreeNode repositoryNode = new DefaultMutableTreeNode(repository.getLoginCredentials().getRegistryURL());
             try {
-                repository.getCatalog().getRepositories().forEach(imageName -> {
+                repository.getCatalog(0, 1000).getRepositories().forEach(imageName -> {
                     DefaultMutableTreeNode imageNode = new DefaultMutableTreeNode(imageName);
-                    Tags tags = repository.getTags(imageName);
+                    Tags tags = repository.getTags(imageName, 0, 1000);
 
                     if (tags.getTags() != null) {
                         tags.getTags().forEach(tag -> {
@@ -119,9 +139,14 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
 
     private void addButtonPressed(AnActionButton button) {
         AddEditDialogWrapper dialog = new AddEditDialogWrapper();
+
         if (dialog.showAndGet()) {
+            tree.setPaintBusy(true);
+            RegistryErrorNotifier.notifySuccess(project, "Adding docker registry. This can take a while...");
+
             dockerRepositories.add(new DockerRegistry(dialog.getLoginCredentials(), true));
-            refreshTree(tree);
+            Content content = ContentFactory.SERVICE.getInstance().createContent(panel, "", false);
+            toolWindow.getContentManager().addContent(content);
         }
     }
 
@@ -153,6 +178,11 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
                     .get();
 
             dockerRepositories.remove(repo);
+
+            DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+            root.removeAllChildren();
+
             refreshTree(tree);
         } else if (selectedNodes.length > 0 && !selectedNodes[0].getAllowsChildren()) {
             String tag = (String) selectedNodes[0].getUserObject();
@@ -175,33 +205,33 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
 
     private DefaultTreeCellRenderer createRenderer() {
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {
-            private Border border = BorderFactory.createEmptyBorder ( 2, 4, 2, 4 );
+            private final Border border = BorderFactory.createEmptyBorder(2, 4, 2, 4);
 
-            public Component getTreeCellRendererComponent ( JTree tree, Object value, boolean sel,
-                                                            boolean expanded, boolean leaf, int row,
-                                                            boolean hasFocus ) {
-                JLabel label = ( JLabel ) super.getTreeCellRendererComponent ( tree, value, sel, expanded, leaf, row, hasFocus );
-                label.setBorder ( border );
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+                                                          boolean expanded, boolean leaf, int row,
+                                                          boolean hasFocus) {
+                JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+                label.setBorder(border);
 
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
                 if (node.getParent() != null && node.getParent().getParent() != null && node.getParent().getParent().getParent() == null) {
-                    label.setIcon(IconLoader.getIcon("/icons/image.svg"));
+                    label.setIcon(IconLoader.getIcon("/icons/image.svg", ExplorerToolWindowFactory.class));
                 }
 
                 return label;
             }
         };
 
-        Icon listIcon = IconLoader.getIcon("/icons/registry.svg");
-        Icon leafIcon = IconLoader.getIcon("/icons/tag.svg");
+        Icon listIcon = IconLoader.getIcon("/icons/registry.svg", ExplorerToolWindowFactory.class);
+        Icon leafIcon = IconLoader.getIcon("/icons/tag.svg", ExplorerToolWindowFactory.class);
 
         renderer.setClosedIcon(listIcon);
         renderer.setOpenIcon(listIcon);
         renderer.setLeafIcon(leafIcon);
         renderer.setIconTextGap(5);
-        renderer.setBounds(0, 50,0,0);
-        renderer.contains(0,50);
+        renderer.setBounds(0, 50, 0, 0);
+        renderer.contains(0, 50);
 
         return renderer;
     }

@@ -2,6 +2,12 @@
 
 # Docker Registry Explorer Changelog
 
+## [1.1.0-stable] - 2023-01-02
+### Added
+- Support for 2023.2+ versions
+- Fixed UI Freezes
+- Implemented pagination for registries with more than 100 images
+
 ## [1.0.9-stable] - 2023-01-02
 ### Added
 - Support for 2022.3+ versions

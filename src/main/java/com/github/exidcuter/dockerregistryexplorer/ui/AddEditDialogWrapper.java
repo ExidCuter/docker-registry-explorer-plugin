@@ -118,7 +118,7 @@ public class AddEditDialogWrapper extends DialogWrapper {
     public LoginCredentials getLoginCredentials() {
         return LoginCredentials.builder()
                 .username(username.getText())
-                .password(password.getText())
+                .password(new String(password.getPassword()))
                 .registryURL(registryURL.getText())
                 .build();
     }
