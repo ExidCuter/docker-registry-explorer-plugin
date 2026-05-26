@@ -79,7 +79,7 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
 
         this.panel = repositoriesPanel;
 
-        Content content = ContentFactory.SERVICE.getInstance().createContent(repositoriesPanel, "", false);
+        Content content = ContentFactory.getInstance().createContent(repositoriesPanel, "", false);
         toolWindow.addContentManagerListener(new ContentManagerListener() {
             @Override
             public void contentAdded(@NotNull ContentManagerEvent event) {
@@ -145,7 +145,7 @@ public class ExplorerToolWindowFactory implements ToolWindowFactory {
             RegistryErrorNotifier.notifySuccess(project, "Adding docker registry. This can take a while...");
 
             dockerRepositories.add(new DockerRegistry(dialog.getLoginCredentials(), true));
-            Content content = ContentFactory.SERVICE.getInstance().createContent(panel, "", false);
+            Content content = ContentFactory.getInstance().createContent(panel, "", false);
             toolWindow.getContentManager().addContent(content);
         }
     }

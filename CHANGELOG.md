@@ -1,6 +1,9 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # Docker Registry Explorer Changelog
+## [1.1.2-stable] - 2026-04-13
+### Added
+- Support for 2026.1+ versions
 
 ## [1.1.0-stable] - 2023-01-02
 ### Added
