@@ -22,7 +22,7 @@ val pluginGroup: String by project
 // `pluginName_` variable ends with `_` because of the collision with Kotlin magic getter in the `intellij` closure.
 // Read more about the issue: https://github.com/JetBrains/intellij-platform-plugin-template/issues/29
 val pluginName_: String by project
-val pluginVersion: String by project
+val configuredPluginVersion = providers.gradleProperty("pluginVersion").get()
 val pluginSinceBuild: String by project
 val pluginUntilBuild: String by project
 val pluginVerifierIdeVersions: String by project
@@ -33,7 +33,7 @@ val platformPlugins: String by project
 val platformDownloadSources: String by project
 
 group = pluginGroup
-version = pluginVersion
+version = configuredPluginVersion
 
 // Configure project's dependencies
 repositories {
@@ -71,7 +71,7 @@ detekt {
 
 tasks {
     withType<org.jetbrains.intellij.platform.gradle.tasks.BuildPluginTask> {
-        archiveVersion.set(pluginVersion)
+        archiveVersion.set(configuredPluginVersion)
     }
     // Set the compatibility versions to 21
     withType<JavaCompile> {
@@ -95,7 +95,7 @@ tasks {
     }
 
     patchPluginXml {
-        version = pluginVersion
+        version = configuredPluginVersion
         sinceBuild = pluginSinceBuild
         untilBuild = pluginUntilBuild
 
@@ -126,7 +126,7 @@ tasks {
         // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/deployment.html#specifying-a-release-channel
-        channels.set(listOf(pluginVersion.split('-').getOrElse(1) { "default" }.split('.').first()))
+        channels.set(listOf(configuredPluginVersion.split('-').getOrElse(1) { "default" }.split('.').first()))
     }
 
     buildSearchableOptions {
