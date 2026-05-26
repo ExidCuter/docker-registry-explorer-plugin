@@ -6,113 +6,237 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBPasswordField;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.ui.FormBuilder;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tdfl.docker.model.LoginCredentials;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
-import java.util.function.Supplier;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.util.concurrent.Executor;
 
 
 public class AddEditDialogWrapper extends DialogWrapper {
-    private static final String urlRegex = "(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})";
+    private static final String URL_REGEX = "(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})";
 
     private JBTextField username;
     private JBPasswordField password;
     private JBTextField registryURL;
+    private Action testConnectionAction;
+    private JButton testConnectionButton;
+    private ComponentValidator testConnectionValidator;
+    private Color testConnectionDefaultForeground;
+    private String testConnectionFailure;
+    private final RegistryConnectionTestRunner connectionTestRunner;
+    private boolean testingConnection;
 
     public AddEditDialogWrapper() {
+        this(new DockerRegistryConnectionTester(), AppExecutorUtil.getAppExecutorService());
+    }
+
+    AddEditDialogWrapper(RegistryConnectionTester tester, Executor workerExecutor) {
         super(true);
+        this.connectionTestRunner = createConnectionTestRunner(tester, workerExecutor);
         initFields();
+        initActions();
         init();
+        initConnectionFeedback();
         setTitle("Add New Registry");
+        updateActions();
     }
 
     public AddEditDialogWrapper(LoginCredentials loginCredentials) {
+        this(loginCredentials, new DockerRegistryConnectionTester(), AppExecutorUtil.getAppExecutorService());
+    }
+
+    AddEditDialogWrapper(LoginCredentials loginCredentials, RegistryConnectionTester tester, Executor workerExecutor) {
         super(true);
+        this.connectionTestRunner = createConnectionTestRunner(tester, workerExecutor);
         initFields();
+        initActions();
         init();
+        initConnectionFeedback();
         setTitle("Edit Registry Entry");
         username.setText(loginCredentials.getUsername());
         password.setText(loginCredentials.getPassword());
         registryURL.setText(loginCredentials.getRegistryURL());
+        updateActions();
     }
 
     private void initFields() {
-        username = new JBTextField();
+        username = new JBTextField(30);
         password = new JBPasswordField();
-        registryURL = new JBTextField();
+        password.setColumns(30);
+        registryURL = new JBTextField(30);
+        registryURL.getEmptyText().setText("https://registry.example.com");
 
-        new ComponentValidator(this.getDisposable()).withValidator((Supplier<ValidationInfo>) () -> {
-            if (registryURL.getText().matches(urlRegex)) {
-                return null;
-            } else {
-                return new ValidationInfo("Please enter a valid URL", registryURL);
-            }
-        }).andStartOnFocusLost().installOn(registryURL);
-
-        new ComponentValidator(this.getDisposable()).andStartOnFocusLost().installOn(registryURL);
+        new ComponentValidator(this.getDisposable())
+                .withValidator(this::validateUrl)
+                .andStartOnFocusLost()
+                .andRegisterOnDocumentListener(registryURL)
+                .installOn(registryURL);
 
         registryURL.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull DocumentEvent e) {
-                ComponentValidator.getInstance(registryURL).ifPresent(ComponentValidator::revalidate);
+                credentialsChanged();
             }
         });
+        username.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void textChanged(@NotNull DocumentEvent e) {
+                credentialsChanged();
+            }
+        });
+        password.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void textChanged(@NotNull DocumentEvent e) {
+                credentialsChanged();
+            }
+        });
+    }
+
+    private void initActions() {
+        testConnectionAction = new AbstractAction("Test Connection") {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                connectionTestRunner.testConnection(getLoginCredentials());
+            }
+        };
     }
 
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
-        JPanel panel = new JPanel();
-        panel.setSize(1500, 300);
-        GridBagLayout layout = new GridBagLayout();
+        return FormBuilder.createFormBuilder()
+                .addLabeledComponent("Registry URL:", registryURL, 8, false)
+                .addLabeledComponent("Username:", username, 8, false)
+                .addLabeledComponent("Password:", password, 0, false)
+                .getPanel();
+    }
 
-        JLabel usernameLabel = new JLabel("Username:");
-        JLabel passwordLabel = new JLabel("Password:");
-        JLabel registryUrlLabel = new JLabel("Registry URL:");
+    @Override
+    protected Action[] createLeftSideActions() {
+        return new Action[]{testConnectionAction};
+    }
 
-        username.setPreferredSize(new Dimension(150, 32));
-        password.setPreferredSize(new Dimension(150, 32));
-        registryURL.setPreferredSize(new Dimension(150, 32));
+    @Nullable
+    @Override
+    protected ValidationInfo doValidate() {
+        return validateUrl();
+    }
 
-        panel.setLayout(layout);
-        GridBagConstraints gbc = new GridBagConstraints();
+    static boolean isValidRegistryUrl(String value) {
+        return value != null && value.matches(URL_REGEX);
+    }
 
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel.add(usernameLabel, gbc);
+    private ValidationInfo validateUrl() {
+        return isValidRegistryUrl(registryURL.getText())
+                ? null
+                : new ValidationInfo("Please enter a valid URL", registryURL);
+    }
 
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.ipadx = 30;
-        panel.add(username, gbc);
+    private void updateActions() {
+        setOKActionEnabled(isValidRegistryUrl(registryURL.getText()));
+        testConnectionAction.setEnabled(isValidRegistryUrl(registryURL.getText()) && !testingConnection);
+    }
 
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panel.add(passwordLabel, gbc);
+    private void initConnectionFeedback() {
+        testConnectionButton = getButton(testConnectionAction);
+        if (testConnectionButton == null) {
+            return;
+        }
 
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.ipadx = 30;
-        panel.add(password, gbc);
+        testConnectionDefaultForeground = testConnectionButton.getForeground();
+        testConnectionValidator = new ComponentValidator(getDisposable())
+                .withValidator(() -> testConnectionFailure == null
+                        ? null
+                        : new ValidationInfo("Connection failed: " + testConnectionFailure, testConnectionButton)
+                                .withOKEnabled());
+        testConnectionValidator.installOn(testConnectionButton);
+    }
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(registryUrlLabel, gbc);
+    private void credentialsChanged() {
+        connectionTestRunner.invalidate();
+        testingConnection = false;
+        clearConnectionFeedback();
+        updateActions();
+    }
 
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.ipadx = 30;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(registryURL, gbc);
+    private void clearConnectionFeedback() {
+        testConnectionFailure = null;
+        if (testConnectionValidator != null) {
+            testConnectionValidator.revalidate();
+        }
+        if (testConnectionButton != null) {
+            testConnectionButton.setForeground(testConnectionDefaultForeground);
+            testConnectionButton.setToolTipText(null);
+        }
+    }
 
-        return panel;
+    private void showConnectionSucceeded() {
+        clearConnectionFeedback();
+        if (testConnectionButton != null) {
+            testConnectionButton.setForeground(UIUtil.getLabelSuccessForeground());
+            testConnectionButton.setToolTipText("Connection successful.");
+        }
+    }
+
+    private void showConnectionFailed(String message) {
+        clearConnectionFeedback();
+        testConnectionFailure = message;
+        if (testConnectionValidator != null) {
+            testConnectionValidator.revalidate();
+        }
+    }
+
+    private RegistryConnectionTestRunner createConnectionTestRunner(
+            RegistryConnectionTester tester,
+            Executor workerExecutor
+    ) {
+        return new RegistryConnectionTestRunner(
+                tester,
+                workerExecutor,
+                javax.swing.SwingUtilities::invokeLater,
+                new RegistryConnectionTestRunner.Listener() {
+                    @Override
+                    public void testingStarted() {
+                        testingConnection = true;
+                        clearConnectionFeedback();
+                        if (testConnectionButton != null) {
+                            testConnectionButton.setToolTipText("Testing connection...");
+                        }
+                        updateActions();
+                    }
+
+                    @Override
+                    public void testingSucceeded() {
+                        testingConnection = false;
+                        updateActions();
+                        showConnectionSucceeded();
+                    }
+
+                    @Override
+                    public void testingFailed(String message) {
+                        testingConnection = false;
+                        updateActions();
+                        showConnectionFailed(message);
+                    }
+                }
+        );
+    }
+
+    @Override
+    protected void dispose() {
+        connectionTestRunner.dispose();
+        super.dispose();
     }
 
     public LoginCredentials getLoginCredentials() {

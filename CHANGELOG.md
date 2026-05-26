@@ -1,6 +1,22 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # Docker Registry Explorer Changelog
+## [1.2.0] - 2026-05-26
+### Added
+- Lazy registry exploration that loads repositories and tags only when branches are expanded.
+- Test Connection support in the add/edit registry dialog with validation-style success and failure feedback.
+- Manifest information display for image tags, with support for Docker schema v2 and OCI manifest responses.
+- Tag context-menu actions for showing manifest information and deleting images.
+
+### Changed
+- Registry requests and tag deletion now execute asynchronously to keep the IDE responsive.
+- Registry management and loading feedback now use a focused single-panel tool-window UI.
+- Image deletion now requires confirmation showing the selected image name and tag.
+
+### Fixed
+- Tool-window tree colors and selection repainting in newer Islands themes.
+- Deprecated IntelliJ notification API usage.
+
 ## [1.1.2-stable] - 2026-04-13
 ### Added
 - Support for 2026.1+ versions

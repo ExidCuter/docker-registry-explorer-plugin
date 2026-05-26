@@ -8,7 +8,7 @@ plugins {
     // Kotlin support
     id("org.jetbrains.kotlin.jvm") version "2.3.0"
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
-    id("org.jetbrains.intellij.platform") version "2.1.0"
+    id("org.jetbrains.intellij.platform") version "2.16.0"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
     id("org.jetbrains.changelog") version "2.2.0"
     // detekt linter - read more: https://detekt.github.io/detekt/gradle.html
@@ -46,11 +46,14 @@ repositories {
 dependencies {
     intellijPlatform {
         create(platformType, platformVersion)
-        instrumentationTools()
         pluginVerifier()
     }
 
     implementation("com.github.ExidCuter:DockerRegistryV2Wrapper:master-SNAPSHOT")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.5")
 }
 
@@ -83,6 +86,12 @@ tasks {
 
     withType<Detekt> {
         jvmTarget = "21"
+    }
+
+    test {
+        useJUnitPlatform()
+        // These are headless unit tests; keep plugin implementation classes visible to the test classloader.
+        classpath += sourceSets.main.get().runtimeClasspath
     }
 
     patchPluginXml {
